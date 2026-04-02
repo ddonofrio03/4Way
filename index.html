@@ -201,9 +201,9 @@
       position: relative;
     }
 
-    .card-icon-weekly {
-      background: linear-gradient(135deg, #203a63 0%, #182948 100%);
-      box-shadow: 0 4px 16px rgba(24,41,72,0.5);
+    .card-icon-valero {
+      background: linear-gradient(135deg, #1a4a20 0%, #0f2e13 100%);
+      box-shadow: 0 4px 16px rgba(15,46,19,0.5);
     }
 
     .card-icon-major {
@@ -286,17 +286,11 @@
       transition: all 0.3s;
     }
 
-    .tourney-card:hover .card-arrow {
-      gap: 12px;
-    }
+    .tourney-card:hover .card-arrow { gap: 12px; }
 
-    .card-arrow svg {
-      transition: transform 0.3s;
-    }
+    .card-arrow svg { transition: transform 0.3s; }
 
-    .tourney-card:hover .card-arrow svg {
-      transform: translateX(4px);
-    }
+    .tourney-card:hover .card-arrow svg { transform: translateX(4px); }
 
     .course-horizon {
       position: absolute;
@@ -489,48 +483,19 @@
         padding-bottom: 100px;
       }
 
-      .tournaments {
-        flex-direction: column;
-        align-items: center;
-      }
-
-      .tourney-card {
-        max-width: 100%;
-      }
-
-      .roster-grid {
-        grid-template-columns: 1fr;
-      }
-
-      .hero-title {
-        letter-spacing: -1px;
-      }
-
-      .card-title {
-        font-size: 34px;
-      }
-
-      .card-venue {
-        font-size: 21px;
-      }
+      .tournaments { flex-direction: column; align-items: center; }
+      .tourney-card { max-width: 100%; }
+      .roster-grid { grid-template-columns: 1fr; }
+      .hero-title { letter-spacing: -1px; }
+      .card-title { font-size: 34px; }
+      .card-venue { font-size: 21px; }
     }
 
     @media (max-width: 480px) {
-      .member-card {
-        padding: 18px 14px;
-      }
-
-      .card-title {
-        font-size: 28px;
-      }
-
-      .hero-subtitle {
-        letter-spacing: 2px;
-      }
-
-      .rules-quote {
-        font-size: 26px;
-      }
+      .member-card { padding: 18px 14px; }
+      .card-title { font-size: 28px; }
+      .hero-subtitle { letter-spacing: 2px; }
+      .rules-quote { font-size: 26px; }
     }
   </style>
 </head>
@@ -558,24 +523,23 @@
 
     <h1 class="hero-title">The Four Horsemen</h1>
     <p class="hero-subtitle">Bad decisions · Great stories</p>
-    <p class="hero-tagline">“Four men. Eighteen holes. Zero chance every scorecard is fully honest.”</p>
+    <p class="hero-tagline">"Four men. Eighteen holes. Zero chance every scorecard is fully honest."</p>
 
     <div class="tournaments">
-      <a href="weekly-game.html" class="tourney-card" target="_blank" rel="noopener noreferrer">
-        <div class="card-icon card-icon-weekly">
-          <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#9fcbff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M4 5h16"/>
-            <path d="M4 12h10"/>
-            <path d="M4 19h16"/>
-            <circle cx="18" cy="12" r="2.5"/>
+
+      <a href="https://ddonofrio03.github.io/4Way/valero.html" class="tourney-card" target="_blank" rel="noopener noreferrer">
+        <div class="card-icon card-icon-valero">
+          <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#6be08a" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 2C8 2 4 6 4 10c0 5 8 12 8 12s8-7 8-12c0-4-4-8-8-8z"/>
+            <circle cx="12" cy="10" r="3"/>
           </svg>
         </div>
         <span class="card-status status-live">Live</span>
-        <div class="card-title">Weekly Damage</div>
-        <div class="card-venue">Local Track · Somewhere expensive enough to hurt</div>
-        <div class="card-dates">Every Saturday · Weather and excuses permitting</div>
+        <div class="card-title">Valero Texas Open</div>
+        <div class="card-venue">TPC San Antonio · San Antonio, TX</div>
+        <div class="card-dates">April 3–6, 2026 · $30 buy-in</div>
         <div class="card-arrow">
-          View Card
+          View Scoreboard
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
             <path d="M5 12h14M12 5l7 7-7 7"/>
           </svg>
@@ -603,6 +567,7 @@
           </svg>
         </div>
       </a>
+
     </div>
 
     <div class="course-horizon">
@@ -633,7 +598,7 @@
       <div class="member-card">
         <div class="member-avatar" style="background:linear-gradient(135deg,#b58b42,#e3b45d)">P</div>
         <div class="member-name">Paul</div>
-        <div class="member-quip">Asks “what are we playing for?” before the first tee peg hits the ground</div>
+        <div class="member-quip">Asks "what are we playing for?" before the first tee peg hits the ground</div>
       </div>
 
       <div class="member-card">
@@ -651,7 +616,7 @@
   </section>
 
   <section class="rules-section">
-    <p class="rules-quote">“I solemnly swear to respect the game, pay my bets, and never use the phrase ‘that’s not usually my shot’ more than nine times per round.”</p>
+    <p class="rules-quote">"I solemnly swear to respect the game, pay my bets, and never use the phrase 'that's not usually my shot' more than nine times per round."</p>
 
     <ul class="rules-list">
       <li>No free drops from embarrassment</li>
