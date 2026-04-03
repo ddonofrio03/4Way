@@ -144,7 +144,7 @@
       flex-wrap: wrap;
       justify-content: center;
       width: 100%;
-      max-width: 860px;
+      max-width: 1320px;
       animation: cardsIn 0.8s ease-out 0.95s both;
     }
 
@@ -190,6 +190,23 @@
 
     .tourney-card:hover::before { opacity: 1; }
 
+    /* Masters draft card gets a green tint to match the tournament */
+    .tourney-card.masters-card {
+      border-color: rgba(26,92,42,0.35);
+    }
+
+    .tourney-card.masters-card::before {
+      background: linear-gradient(135deg, rgba(26,92,42,0.14) 0%, transparent 52%);
+    }
+
+    .tourney-card.masters-card:hover {
+      border-color: rgba(107,224,138,0.38);
+      box-shadow:
+        0 20px 60px rgba(0,0,0,0.45),
+        0 0 42px rgba(26,92,42,0.12),
+        inset 0 1px 0 rgba(255,255,255,0.06);
+    }
+
     .card-icon {
       width: 62px;
       height: 62px;
@@ -209,6 +226,11 @@
     .card-icon-major {
       background: linear-gradient(135deg, #5c4318 0%, #3c2c10 100%);
       box-shadow: 0 4px 16px rgba(60,44,16,0.45);
+    }
+
+    .card-icon-masters {
+      background: linear-gradient(135deg, #1a5c2a 0%, #0d3318 100%);
+      box-shadow: 0 4px 16px rgba(13,51,24,0.55);
     }
 
     .card-status {
@@ -244,6 +266,12 @@
       background: rgba(227,180,93,0.12);
       color: var(--amber-light);
       border: 1px solid rgba(227,180,93,0.28);
+    }
+
+    .status-draft {
+      background: rgba(26,92,42,0.18);
+      color: #6be08a;
+      border: 1px solid rgba(107,224,138,0.28);
     }
 
     @keyframes pulse {
@@ -284,6 +312,10 @@
       color: var(--sky-bright);
       opacity: 0.95;
       transition: all 0.3s;
+    }
+
+    .masters-card .card-arrow {
+      color: #6be08a;
     }
 
     .tourney-card:hover .card-arrow { gap: 12px; }
@@ -540,6 +572,24 @@
         <div class="card-dates">April 3–6, 2026 · $30 buy-in</div>
         <div class="card-arrow">
           View Scoreboard
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+            <path d="M5 12h14M12 5l7 7-7 7"/>
+          </svg>
+        </div>
+      </a>
+
+      <a href="https://ddonofrio03.github.io/4Way/picks.html" class="tourney-card masters-card" target="_blank" rel="noopener noreferrer">
+        <div class="card-icon card-icon-masters">
+          <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#6be08a" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"/>
+          </svg>
+        </div>
+        <span class="card-status status-draft">Masters Draft</span>
+        <div class="card-title">Masters 2026</div>
+        <div class="card-venue">Augusta National · Augusta, GA</div>
+        <div class="card-dates">April 10–13, 2026 · Snake draft · 4 picks + alt</div>
+        <div class="card-arrow">
+          View Draft Picks
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
             <path d="M5 12h14M12 5l7 7-7 7"/>
           </svg>
