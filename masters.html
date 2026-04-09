@@ -35,7 +35,6 @@
     min-height: 100vh;
   }
 
-  /* ── HEADER ── */
   header {
     background: var(--augusta-dark);
     color: var(--white);
@@ -63,7 +62,6 @@
     gap: 14px;
   }
 
-  /* Masters Logo */
   .masters-logo {
     width: 48px;
     height: 48px;
@@ -139,7 +137,6 @@
     color: #5a8a6a;
   }
 
-  /* ── COUNTDOWN BAR ── */
   .countdown-bar {
     background: #003a26;
     border-bottom: 1px solid #004d34;
@@ -152,7 +149,6 @@
 
   #countdown { color: #6a9a7a; }
 
-  /* ── TABS ── */
   .tabs-wrap {
     max-width: 1100px;
     margin: 0 auto;
@@ -183,7 +179,6 @@
   .tab:hover { color: var(--ink-mid); }
   .tab.active { color: var(--green); border-bottom-color: var(--green); }
 
-  /* ── MAIN ── */
   main {
     max-width: 1100px;
     margin: 0 auto;
@@ -193,7 +188,6 @@
   .section { display: none; }
   .section.active { display: block; }
 
-  /* ── STATUS BAR ── */
   .status-msg {
     font-size: 13px;
     color: var(--ink-light);
@@ -203,7 +197,6 @@
 
   .status-msg.error { color: var(--red); }
 
-  /* ── SCOREBOARD GRID ── */
   .board-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(310px, 1fr));
@@ -310,7 +303,6 @@
     margin-left: 4px;
   }
 
-  /* ── ROUND ROW ── */
   .card-rounds {
     display: flex;
     border-top: 2px solid var(--border);
@@ -347,7 +339,6 @@
   .round-val.over  { color: var(--red); }
   .round-val.best  { color: var(--gold); font-weight: 600; }
 
-  /* ── POINTS TABLE ── */
   .pts-wrap {
     background: var(--white);
     border: 1px solid var(--border);
@@ -432,7 +423,6 @@
   .rank-3 { background: #fdf0ee; color: #b0634a; }
   .rank-n { background: var(--surface); color: var(--ink-light); }
 
-  /* ── TEAM SCORES ── */
   .ts-wrap {
     background: var(--white);
     border: 1px solid var(--border);
@@ -514,7 +504,6 @@
   .ts-table th.ts-total-col { background: #ddeedd; }
   .ts-table tr.cut-row td:first-child { color: #b03030; }
 
-  /* ── LEADERBOARD ── */
   .lb-wrap {
     background: var(--white);
     border: 1px solid var(--border);
@@ -569,7 +558,6 @@
     font-weight: 500;
   }
 
-  /* ── PENALTY NOTE ── */
   .penalty-note {
     margin-top: 10px;
     padding: 10px 14px;
@@ -581,7 +569,6 @@
     font-family: 'DM Mono', monospace;
   }
 
-  /* ── LOADING STATE ── */
   .loading-overlay {
     text-align: center;
     padding: 60px 0;
@@ -603,7 +590,6 @@
 
   @keyframes spin { to { transform: rotate(360deg); } }
 
-  /* ── RESPONSIVE ── */
   @media (max-width: 600px) {
     .header-inner { padding: 12px 16px; }
     main, .tabs-wrap { padding-left: 16px; padding-right: 16px; }
@@ -618,16 +604,11 @@
 <header>
   <div class="header-inner">
     <div class="wordmark">
-      <!-- Masters-style flag/logo as inline SVG -->
       <svg class="masters-logo" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-        <!-- Flagstick -->
         <rect x="28" y="10" width="3" height="80" rx="1.5" fill="#e0d8c0"/>
-        <!-- Flag -->
         <polygon points="31,10 75,24 31,38" fill="#f0d040"/>
         <polygon points="31,10 75,24 31,38" fill="url(#flagShade)" opacity="0.3"/>
-        <!-- Flag detail -->
         <text x="46" y="29" font-family="serif" font-size="14" font-weight="bold" fill="#006747" text-anchor="middle">M</text>
-        <!-- Cup/hole -->
         <ellipse cx="30" cy="90" rx="18" ry="5" fill="#2a5a3a"/>
         <ellipse cx="30" cy="88" rx="14" ry="4" fill="#1a4a2a"/>
         <defs>
@@ -692,10 +673,10 @@ const CONFIG = {
     Mike  : "Viktor Hovland",
     Paul  : "Brooks Koepka"
   },
-  // Points per category (winner takes all, ties split) — $30 buy-in
+  // $30 buy-in per person. $20 each for R1, R2, R3, R4, Overall, and Top Finisher.
   points: { R1: 20, R2: 20, R3: 20, R4: 20, Overall: 20, Winner: 20 },
-  refreshInterval: 60, // seconds
-  // Bettor colors
+  buyIn: 30,
+  refreshInterval: 60,
   colors: {
     Dave:  { bg: "#6CABDD", text: "#ffffff" },
     TJ:    { bg: "#006F71", text: "#ffffff" },
@@ -890,7 +871,8 @@ function calcPoints() {
       if (info.isCut || info.isWD) return;
       const s = parseRelScore(info.score);
       if (s !== null && (lowestScore === null || s < lowestScore)) {
-        lowestScore = s; tournWinner = name;
+        lowestScore = s;
+        tournWinner = name;
       }
     });
     if (tournWinner) {
@@ -904,7 +886,7 @@ function calcPoints() {
     }
   }
 
-  const buyIn = CONFIG.points.R1;
+  const buyIn = CONFIG.buyIn;
 
   CONFIG.bettors.forEach(b => {
     const earned = pts[b].R1 + pts[b].R2 + pts[b].R3 + pts[b].R4 +
@@ -991,8 +973,10 @@ async function fetchScores() {
 
     const pos = (isCut || isWD) ? "CUT" : String(idx + 1);
 
-    newMap[name] = { score, today, thru, pos, r1, r2, r3, r4,
-                     r1holes, r2holes, r3holes, r4holes, isCut, isWD };
+    newMap[name] = {
+      score, today, thru, pos, r1, r2, r3, r4,
+      r1holes, r2holes, r3holes, r4holes, isCut, isWD
+    };
   });
 
   return newMap;
@@ -1023,7 +1007,7 @@ function renderScoreboard() {
   let html = '<div class="board-grid">';
 
   sorted.forEach(bettor => {
-    const picks   = CONFIG.picks[bettor];
+    const picks = CONFIG.picks[bettor];
     const r1t_h = teamRoundTotal(bettor, "r1");
     const r2t_h = teamRoundTotal(bettor, "r2");
     const r3t_h = teamRoundTotal(bettor, "r3");
@@ -1054,9 +1038,6 @@ function renderScoreboard() {
       const info = scoreMap[player] || {};
       const isWD  = !!info.isWD;
       const isCut = !!(info.isCut || info.isWD);
-      const scoreVal = isWD ? "WD" : isCut ? "CUT" : (info.score || "--");
-      const scoreParsed = parseRelScore(isCut ? null : info.score);
-      const cls = isCut ? "cut" : relClass(scoreParsed);
       const pos = info.pos || "--";
       const thru = info.thru || "";
       const todayVal = isCut ? "" : (info.today || "");
@@ -1073,10 +1054,6 @@ function renderScoreboard() {
       } else if (thru && thru !== "--") {
         holeDisplay = "Hole " + thru;
       }
-
-      const todayDisplay = todayVal && todayVal !== "--"
-        ? (todayParsed === 0 ? "E today" : (todayParsed > 0 ? "+" + todayParsed + " today" : todayParsed + " today"))
-        : "";
 
       let penNote = "";
       if (isCut) {
@@ -1095,6 +1072,7 @@ function renderScoreboard() {
         cutPenaltyDisplay = pen !== null ? fmtRel(pen) : "--";
         cutPenaltyCls = pen !== null ? relClass(pen) : "cut";
       }
+
       const primaryVal  = isCut ? cutPenaltyDisplay : (isWD ? "WD" : (todayVal && todayVal !== "--" ? todayVal : "--"));
       const primaryCls  = isCut ? cutPenaltyCls : (isWD ? "cut" : todayCls);
       const overallVal  = isCut ? "" : (isWD ? "" : (info.score && info.score !== "--" ? info.score + " overall" : ""));
@@ -1121,7 +1099,6 @@ function renderScoreboard() {
     if (alt) {
       const ai = scoreMap[alt] || {};
       const altToday = ai.isCut ? "CUT" : (ai.today && ai.today !== "--" ? ai.today : "--");
-      const as = altToday;
       const ac = ai.isCut ? "cut" : relClass(parseRelScore(ai.today));
       const altOverall = ai.isCut ? "" : (ai.score && ai.score !== "--" ? ai.score + " overall" : "");
       const altOverallCls = relClass(parseRelScore(ai.score));
@@ -1132,7 +1109,7 @@ function renderScoreboard() {
           <div class="pick-detail">${ai.pos || "--"} · ${ai.thru || "--"}</div>
         </div>
         <div style="text-align:right;min-width:60px">
-          <span class="pick-score ${ac}" style="font-size:13px;display:block">${as}</span>
+          <span class="pick-score ${ac}" style="font-size:13px;display:block">${altToday}</span>
           ${altOverall ? `<span style="font-size:11px;font-family:'DM Mono',monospace" class="${altOverallCls}">${altOverall}</span>` : ""}
         </div>
       </div>`;
@@ -1232,7 +1209,7 @@ function renderPoints() {
   html += '</tbody></table></div>';
 
   html += `<p style="font-size:12px;color:var(--ink-light);margin-top:10px;font-family:'DM Mono',monospace">
-    $30 buy-in &nbsp;·&nbsp; $20 to lowest team total each round · Top Finisher paid on final result · ties split evenly
+    $30 buy-in &nbsp;·&nbsp; $20 for each round, $20 for overall, and $20 for Top Finisher · ties split evenly
   </p>`;
 
   el.innerHTML = html;
@@ -1254,8 +1231,8 @@ function renderTeamScores() {
     const r3t = teamRoundTotal(bettor, "r3");
     const r4t = teamRoundTotal(bettor, "r4");
 
-    let overallParts = [r1t, r2t, r3t, r4t].filter(v => v !== null);
-    const overall = overallParts.length ? overallParts.reduce((a,b) => a+b, 0) : null;
+    const overallParts = [r1t, r2t, r3t, r4t].filter(v => v !== null);
+    const overall = overallParts.length ? overallParts.reduce((a, b) => a + b, 0) : null;
 
     const tsColor = CONFIG.colors[bettor] || { bg: "#1a1a18", text: "#aaa" };
     html += `<div class="ts-wrap">
@@ -1292,14 +1269,12 @@ function renderTeamScores() {
       const r3v = isCut ? r3pen : parseRelScore(info.r3);
       const r4v = isCut ? r4pen : parseRelScore(info.r4);
       const scores = [r1v, r2v, r3v, r4v].filter(v => v !== null);
-      const playerTotal = scores.length ? scores.reduce((a,b) => a+b, 0) : null;
+      const playerTotal = scores.length ? scores.reduce((a, b) => a + b, 0) : null;
       const totalFmt = playerTotal !== null ? fmtRel(playerTotal) + (isCut ? `<br><span style="font-size:10px;color:#b03030">cut</span>` : "") : "--";
       const totalCls = relClass(playerTotal);
 
       const r1c = relClass(r1v);
       const r2c = relClass(r2v);
-      const r3c = isCut ? "" : relClass(parseRelScore(info.r3));
-      const r4c = isCut ? "" : relClass(parseRelScore(info.r4));
 
       html += `<tr class="${isCut ? "cut-row" : ""}">
         <td>${player}${isCut ? ' <span style="font-size:10px;background:#fdecea;color:#b03030;padding:1px 4px;border-radius:3px;font-weight:500">CUT</span>' : ""}</td>
@@ -1386,7 +1361,9 @@ async function refresh() {
   const btn = document.getElementById("refresh-btn");
   btn.disabled = true;
   btn.textContent = "Loading...";
-  document.getElementById("status-msg").textContent = "";
+  const statusEl = document.getElementById("status-msg");
+  statusEl.textContent = "";
+  statusEl.classList.remove("error");
 
   try {
     scoreMap = await fetchScores();
@@ -1400,8 +1377,8 @@ async function refresh() {
     document.getElementById("live-indicator").textContent = "LIVE";
     resetCountdown();
   } catch(e) {
-    document.getElementById("status-msg").textContent = "Error fetching scores: " + e.message;
-    document.getElementById("status-msg").classList.add("error");
+    statusEl.textContent = "Error fetching scores: " + e.message;
+    statusEl.classList.add("error");
     document.getElementById("live-indicator").textContent = "ERROR";
   } finally {
     fetching = false;
@@ -1412,6 +1389,7 @@ async function refresh() {
 
 function resetCountdown() {
   countdown = CONFIG.refreshInterval;
+  document.getElementById("countdown").textContent = countdown + "s";
   clearInterval(countdownTimer);
   countdownTimer = setInterval(() => {
     countdown--;
@@ -1432,7 +1410,6 @@ function showTab(id) {
   );
 }
 
-// ── BOOT ──
 refresh();
 </script>
 </body>
