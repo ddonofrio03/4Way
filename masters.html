@@ -674,7 +674,7 @@ const CONFIG = {
     Paul  : "Brooks Koepka"
   },
   // $30 buy-in per person. $20 each for R1, R2, R3, R4, Overall, and Top Finisher.
-  points: { R1: 20, R2: 20, R3: 20, R4: 20, Overall: 20, Winner: 20 },
+  cash: { R1: 20, R2: 20, R3: 20, R4: 20, Overall: 20, Winner: 20 },
   buyIn: 30,
   refreshInterval: 60,
   colors: {
@@ -844,7 +844,7 @@ function calcPoints() {
 
     const best = Math.min(...valid);
     const winners = CONFIG.bettors.filter(b => totals[b] === best);
-    const share = Math.round((CONFIG.points[label] / winners.length) * 100) / 100;
+    const share = Math.round((CONFIG.cash[label] / winners.length) * 100) / 100;
     winners.forEach(b => pts[b][label] = share);
   });
 
@@ -862,7 +862,7 @@ function calcPoints() {
     if (validO.length) {
       const bestO = Math.min(...validO);
       const winnersO = CONFIG.bettors.filter(b => overalls[b] === bestO);
-      const shareO = Math.round((CONFIG.points.Overall / winnersO.length) * 100) / 100;
+      const shareO = Math.round((CONFIG.cash.Overall / winnersO.length) * 100) / 100;
       winnersO.forEach(b => pts[b].Overall = shareO);
     }
 
@@ -880,7 +880,7 @@ function calcPoints() {
         CONFIG.picks[b].includes(tournWinner)
       );
       if (bettorsWithWinner.length) {
-        const shareW = Math.round((CONFIG.points.Winner / bettorsWithWinner.length) * 100) / 100;
+        const shareW = Math.round((CONFIG.cash.Winner / bettorsWithWinner.length) * 100) / 100;
         bettorsWithWinner.forEach(b => pts[b].Winner = shareW);
       }
     }
