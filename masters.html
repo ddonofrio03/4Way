@@ -1109,6 +1109,10 @@ function renderScoreboard() {
                   : null;
         cutPenaltyDisplay = pen !== null ? fmtRel(pen) : "--";
         cutPenaltyCls = pen !== null ? relClass(pen) : "cut";
+        
+        if (player === "Min Woo Lee") {
+          console.log(`${player}: r3started=${r3started}, r4started=${r4started}, pen=${pen}, display=${cutPenaltyDisplay}`);
+        }
       }
 
       const primaryVal  = isCut ? cutPenaltyDisplay : (isWD ? "WD" : (todayVal && todayVal !== "--" ? todayVal : "--"));
