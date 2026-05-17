@@ -873,9 +873,10 @@ function calcPoints() {
       winnersO.forEach(b => pts[b].Overall = shareO);
     }
 
-    const allMain = allDrafted();
+    const mainPool = new Set();
+    bettors().forEach(b => picksFor(b).forEach(p => mainPool.add(p)));
     let topPlayer = null, topScore = null;
-    allMain.forEach(name => {
+    mainPool.forEach(name => {
       const info = scoreMap[name];
       if (!info || info.isCut || info.isWD) return;
       const s = parseRelScore(info.score);
