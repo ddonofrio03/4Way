@@ -1,705 +1,286 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>The Four Horsemen — Golf Bets</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=Outfit:wght@300;400;500;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
-  <style>
-    :root {
-      --navy-deep: #0c1326;
-      --navy-rich: #14213d;
-      --slate: #22304f;
-      --sky: #7fb3ff;
-      --sky-bright: #9fcbff;
-      --silver: #d7deea;
-      --silver-soft: #b8c2d6;
-      --white: #ffffff;
-      --amber: #e3b45d;
-      --amber-light: #f2cf86;
-      --amber-dim: #b58b42;
-      --card-dark: rgba(16, 25, 45, 0.88);
-      --card-darker: rgba(10, 17, 31, 0.96);
-    }
-
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-
-    html { scroll-behavior: smooth; }
-
-    body {
-      font-family: 'Outfit', sans-serif;
-      background: var(--navy-deep);
-      color: var(--silver);
-      min-height: 100vh;
-      overflow-x: hidden;
-      line-height: 1.5;
-    }
-
-    body::before {
-      content: '';
-      position: fixed;
-      inset: 0;
-      background:
-        radial-gradient(circle at 15% 15%, rgba(127,179,255,0.20) 0%, transparent 32%),
-        radial-gradient(circle at 85% 18%, rgba(227,180,93,0.10) 0%, transparent 28%),
-        radial-gradient(circle at 50% 80%, rgba(90,115,170,0.16) 0%, transparent 38%),
-        linear-gradient(180deg, #182746 0%, #10192d 45%, #08101f 100%);
-      z-index: -2;
-    }
-
-    body::after {
-      content: '';
-      position: fixed;
-      inset: 0;
-      opacity: 0.03;
-      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-      background-size: 256px 256px;
-      z-index: -1;
-      pointer-events: none;
-    }
-
-    .hero {
-      position: relative;
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding: 60px 24px;
-      text-align: center;
-    }
-
-    .hero::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 220px;
-      height: 3px;
-      background: linear-gradient(90deg, transparent, var(--amber), transparent);
-    }
-
-    .hero-icon {
-      margin-bottom: 34px;
-      animation: iconIn 0.9s ease-out 0.2s both;
-    }
-
-    @keyframes iconIn {
-      from { opacity: 0; transform: translateY(20px) scale(0.96); }
-      to   { opacity: 1; transform: translateY(0) scale(1); }
-    }
-
-    .hero-badge {
-      filter: drop-shadow(0 10px 26px rgba(127,179,255,0.24));
-    }
-
-    .hero-title {
-      font-family: 'Playfair Display', serif;
-      font-size: clamp(64px, 11vw, 128px);
-      font-weight: 900;
-      letter-spacing: -2px;
-      line-height: 0.94;
-      color: var(--white);
-      margin-bottom: 16px;
-      animation: titleIn 0.8s ease-out 0.4s both;
-      text-shadow: 0 2px 40px rgba(0,0,0,0.45);
-    }
-
-    @keyframes titleIn {
-      from { opacity: 0; transform: translateY(30px) scale(0.95); }
-      to   { opacity: 1; transform: translateY(0) scale(1); }
-    }
-
-    .hero-subtitle {
-      font-family: 'DM Mono', monospace;
-      font-size: clamp(20px, 3vw, 34px);
-      font-weight: 500;
-      letter-spacing: 3px;
-      text-transform: uppercase;
-      color: var(--amber-light);
-      margin-bottom: 28px;
-      animation: subIn 0.8s ease-out 0.6s both;
-    }
-
-    .hero-tagline {
-      font-family: 'Playfair Display', serif;
-      font-style: italic;
-      font-size: clamp(23px, 2.8vw, 31px);
-      color: rgba(215,222,234,0.9);
-      margin-bottom: 56px;
-      max-width: 900px;
-      animation: subIn 0.8s ease-out 0.75s both;
-    }
-
-    @keyframes subIn {
-      from { opacity: 0; transform: translateY(15px); }
-      to   { opacity: 1; transform: translateY(0); }
-    }
-
-    .tournaments {
-      display: flex;
-      gap: 24px;
-      flex-wrap: wrap;
-      justify-content: center;
-      width: 100%;
-      max-width: 1320px;
-      animation: cardsIn 0.8s ease-out 0.95s both;
-    }
-
-    @keyframes cardsIn {
-      from { opacity: 0; transform: translateY(40px); }
-      to   { opacity: 1; transform: translateY(0); }
-    }
-
-    .tourney-card {
-      position: relative;
-      flex: 1 1 340px;
-      max-width: 400px;
-      background: linear-gradient(145deg, var(--card-dark) 0%, var(--card-darker) 100%);
-      border: 1px solid rgba(227,180,93,0.18);
-      border-radius: 18px;
-      padding: 34px 30px 30px;
-      text-decoration: none;
-      color: var(--silver);
-      transition: all 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-      overflow: hidden;
-      cursor: pointer;
-      backdrop-filter: blur(12px);
-    }
-
-    .tourney-card::before {
-      content: '';
-      position: absolute;
-      inset: 0;
-      border-radius: 18px;
-      background: linear-gradient(135deg, rgba(127,179,255,0.10) 0%, transparent 52%);
-      opacity: 0;
-      transition: opacity 0.35s;
-    }
-
-    .tourney-card:hover {
-      transform: translateY(-6px);
-      border-color: rgba(227,180,93,0.42);
-      box-shadow:
-        0 20px 60px rgba(0,0,0,0.45),
-        0 0 42px rgba(127,179,255,0.08),
-        inset 0 1px 0 rgba(255,255,255,0.06);
-    }
-
-    .tourney-card:hover::before { opacity: 1; }
-
-    /* Masters draft card gets a green tint to match the tournament */
-    .tourney-card.masters-card {
-      border-color: rgba(26,92,42,0.35);
-    }
-
-    .tourney-card.masters-card::before {
-      background: linear-gradient(135deg, rgba(26,92,42,0.14) 0%, transparent 52%);
-    }
-
-    .tourney-card.masters-card:hover {
-      border-color: rgba(107,224,138,0.38);
-      box-shadow:
-        0 20px 60px rgba(0,0,0,0.45),
-        0 0 42px rgba(26,92,42,0.12),
-        inset 0 1px 0 rgba(255,255,255,0.06);
-    }
-
-    .card-icon {
-      width: 62px;
-      height: 62px;
-      border-radius: 16px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin-bottom: 20px;
-      position: relative;
-    }
-
-    .card-icon-valero {
-      background: linear-gradient(135deg, #1a4a20 0%, #0f2e13 100%);
-      box-shadow: 0 4px 16px rgba(15,46,19,0.5);
-    }
-
-    .card-icon-major {
-      background: linear-gradient(135deg, #5c4318 0%, #3c2c10 100%);
-      box-shadow: 0 4px 16px rgba(60,44,16,0.45);
-    }
-
-    .card-icon-masters {
-      background: linear-gradient(135deg, #1a5c2a 0%, #0d3318 100%);
-      box-shadow: 0 4px 16px rgba(13,51,24,0.55);
-    }
-
-    .card-status {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      font-family: 'DM Mono', monospace;
-      font-size: 18px;
-      font-weight: 500;
-      letter-spacing: 1.2px;
-      text-transform: uppercase;
-      padding: 6px 12px;
-      border-radius: 20px;
-      margin-bottom: 18px;
-    }
-
-    .status-live {
-      background: rgba(127,179,255,0.14);
-      color: var(--sky-bright);
-      border: 1px solid rgba(127,179,255,0.28);
-    }
-
-    .status-live::before {
-      content: '';
-      width: 7px;
-      height: 7px;
-      border-radius: 50%;
-      background: var(--sky-bright);
-      animation: pulse 2s ease-in-out infinite;
-    }
-
-    .status-upcoming {
-      background: rgba(227,180,93,0.12);
-      color: var(--amber-light);
-      border: 1px solid rgba(227,180,93,0.28);
-    }
-    .status-complete {
-      background: rgba(255,255,255,0.05);
-      color: rgba(215,222,234,0.45);
-      border: 1px solid rgba(255,255,255,0.10);
-    }
-
-    .status-draft {
-      background: rgba(26,92,42,0.18);
-      color: #6be08a;
-      border: 1px solid rgba(107,224,138,0.28);
-    }
-
-    @keyframes pulse {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0.35; }
-    }
-
-    .card-title {
-      font-family: 'Playfair Display', serif;
-      font-size: 42px;
-      font-weight: 700;
-      line-height: 1.1;
-      margin-bottom: 8px;
-      color: var(--white);
-    }
-
-    .card-venue {
-      font-size: 24px;
-      font-weight: 400;
-      color: rgba(215,222,234,0.9);
-      margin-bottom: 16px;
-    }
-
-    .card-dates {
-      font-family: 'DM Mono', monospace;
-      font-size: 19px;
-      color: var(--amber-light);
-      letter-spacing: 0.5px;
-      margin-bottom: 22px;
-    }
-
-    .card-arrow {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      font-size: 20px;
-      font-weight: 600;
-      color: var(--sky-bright);
-      opacity: 0.95;
-      transition: all 0.3s;
-    }
-
-    .masters-card .card-arrow {
-      color: #6be08a;
-    }
-
-    .tourney-card:hover .card-arrow { gap: 12px; }
-
-    .card-arrow svg { transition: transform 0.3s; }
-
-    .tourney-card:hover .card-arrow svg { transform: translateX(4px); }
-
-    .course-horizon {
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      height: 200px;
-      overflow: hidden;
-      pointer-events: none;
-    }
-
-    .course-horizon svg {
-      position: absolute;
-      bottom: 0;
-      width: 100%;
-      height: 200px;
-    }
-
-    .roster-section {
-      position: relative;
-      padding: 90px 24px 110px;
-      max-width: 920px;
-      margin: 0 auto;
-    }
-
-    .roster-section::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 60px;
-      height: 1px;
-      background: var(--amber);
-      opacity: 0.45;
-    }
-
-    .roster-label {
-      font-family: 'DM Mono', monospace;
-      font-size: 22px;
-      letter-spacing: 4px;
-      text-transform: uppercase;
-      color: var(--amber-light);
-      text-align: center;
-      margin-bottom: 12px;
-    }
-
-    .roster-title {
-      font-family: 'Playfair Display', serif;
-      font-size: 52px;
-      font-weight: 700;
-      text-align: center;
-      color: var(--white);
-      margin-bottom: 48px;
-    }
-
-    .roster-grid {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 18px;
-    }
-
-    .member-card {
-      position: relative;
-      padding: 28px 22px;
-      background: linear-gradient(145deg, rgba(23,35,60,0.74) 0%, rgba(10,17,31,0.90) 100%);
-      border: 1px solid rgba(227,180,93,0.12);
-      border-radius: 14px;
-      text-align: center;
-      transition: all 0.3s;
-    }
-
-    .member-card:hover {
-      border-color: rgba(227,180,93,0.24);
-      transform: translateY(-2px);
-      box-shadow: 0 8px 30px rgba(0,0,0,0.3);
-    }
-
-    .member-avatar {
-      width: 60px;
-      height: 60px;
-      border-radius: 50%;
-      margin: 0 auto 14px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-family: 'Playfair Display', serif;
-      font-size: 24px;
-      font-weight: 700;
-      color: var(--white);
-      position: relative;
-      overflow: hidden;
-    }
-
-    .member-avatar::after {
-      content: '';
-      position: absolute;
-      inset: 0;
-      border-radius: 50%;
-      border: 2px solid rgba(255,255,255,0.18);
-    }
-
-    .member-name {
-      font-size: 30px;
-      font-weight: 700;
-      color: var(--white);
-      margin-bottom: 6px;
-    }
-
-    .member-quip {
-      font-family: 'DM Mono', monospace;
-      font-size: 18px;
-      color: rgba(215,222,234,0.86);
-      line-height: 1.45;
-    }
-
-    .rules-section {
-      padding: 70px 24px;
-      max-width: 820px;
-      margin: 0 auto;
-      text-align: center;
-    }
-
-    .rules-section::before {
-      content: '';
-      display: block;
-      width: 42px;
-      height: 1px;
-      background: var(--amber);
-      opacity: 0.35;
-      margin: 0 auto 40px;
-    }
-
-    .rules-quote {
-      font-family: 'Playfair Display', serif;
-      font-style: italic;
-      font-size: 32px;
-      line-height: 1.6;
-      color: rgba(215,222,234,0.95);
-      margin-bottom: 40px;
-    }
-
-    .rules-list {
-      list-style: none;
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      gap: 14px 26px;
-      margin-bottom: 48px;
-    }
-
-    .rules-list li {
-      font-family: 'DM Mono', monospace;
-      font-size: 19px;
-      letter-spacing: 0.4px;
-      color: rgba(215,222,234,0.9);
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .rules-list li::before {
-      content: '🏌️';
-      font-size: 18px;
-    }
-
-    footer {
-      text-align: center;
-      padding: 40px 24px 30px;
-      border-top: 1px solid rgba(227,180,93,0.1);
-    }
-
-    .footer-text {
-      font-family: 'DM Mono', monospace;
-      font-size: 18px;
-      color: rgba(215,222,234,0.74);
-      letter-spacing: 1px;
-    }
-
-    a:focus-visible {
-      outline: 3px solid var(--amber-light);
-      outline-offset: 4px;
-    }
-
-    @media (max-width: 700px) {
-      .hero {
-        padding: 40px 20px;
-        min-height: auto;
-        padding-top: 80px;
-        padding-bottom: 100px;
-      }
-
-      .tournaments { flex-direction: column; align-items: center; }
-      .tourney-card { max-width: 100%; }
-      .roster-grid { grid-template-columns: 1fr; }
-      .hero-title { letter-spacing: -1px; }
-      .card-title { font-size: 34px; }
-      .card-venue { font-size: 21px; }
-    }
-
-    @media (max-width: 480px) {
-      .member-card { padding: 18px 14px; }
-      .card-title { font-size: 28px; }
-      .hero-subtitle { letter-spacing: 2px; }
-      .rules-quote { font-size: 26px; }
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Four Way — Golf Bets</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=Outfit:wght@300;400;500;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy-deep:#0c1322;--navy-rich:#141f33;--slate:#22304f;
+    --sky:#7c97c4;--sky-bright:#a7bce0;
+    --silver:#cdd5e3;--silver-soft:#9aa6bd;--white:#ffffff;
+    --amber:#cdab6b;--amber-light:#e4cea0;--amber-dim:#a98c52;
+    --pos:#85c79f;--neg:#d98f87;--muted:rgba(205,213,227,0.3);
+    --line:rgba(205,171,107,0.16);
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  html{scroll-behavior:smooth;}
+  body{font-family:'Outfit',sans-serif;background:var(--navy-deep);color:var(--silver);min-height:100vh;overflow-x:hidden;line-height:1.5;}
+  body::before{content:'';position:fixed;inset:0;z-index:-2;background:
+    radial-gradient(ellipse 70% 50% at 50% 0%,rgba(124,151,196,0.13) 0%,transparent 58%),
+    radial-gradient(ellipse 100% 100% at 50% 50%,rgba(15,24,40,1) 0%,rgba(7,12,22,1) 100%);}
+
+  .wrap{max-width:1000px;margin:0 auto;padding:0 24px;}
+
+  /* ── HERO ── */
+  .hero{position:relative;padding:78px 24px 26px;text-align:center;}
+  .hero::before{content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);width:160px;height:1px;background:linear-gradient(90deg,transparent,var(--amber),transparent);}
+  .hero-emblem{margin-bottom:26px;animation:fadeUp 1s ease-out 0.2s both;}
+  @keyframes fadeUp{from{opacity:0;transform:translateY(18px);}to{opacity:1;transform:translateY(0);}}
+  .hero-title{font-family:'Playfair Display',serif;font-size:clamp(52px,10vw,116px);font-weight:900;letter-spacing:-2px;line-height:0.95;color:var(--white);margin-bottom:16px;animation:fadeUp 0.8s ease-out 0.4s both;}
+  .hero-subtitle{font-family:'DM Mono',monospace;font-size:clamp(11px,2.5vw,14px);font-weight:500;letter-spacing:4px;text-transform:uppercase;color:var(--amber-light);animation:fadeUp 0.8s ease-out 0.6s both;}
+  .hero-links{margin-top:24px;display:flex;gap:24px;justify-content:center;flex-wrap:wrap;animation:fadeUp 0.8s ease-out 0.8s both;}
+  .ghost-link{font-family:'DM Mono',monospace;font-size:12px;letter-spacing:1.5px;text-transform:uppercase;color:var(--amber-light);text-decoration:none;padding-bottom:3px;border-bottom:1px solid var(--line);transition:all 0.25s;}
+  .ghost-link:hover{color:var(--white);border-color:var(--amber);}
+
+  .section{padding:48px 0 10px;}
+  .eyebrow{font-family:'DM Mono',monospace;font-size:11px;letter-spacing:4px;text-transform:uppercase;color:var(--amber-light);text-align:center;margin-bottom:8px;}
+  .section-title{font-family:'Playfair Display',serif;font-size:clamp(26px,4vw,40px);font-weight:700;text-align:center;color:var(--white);margin-bottom:30px;}
+
+  /* ── MAJORS ── */
+  .featured{position:relative;display:block;background:linear-gradient(135deg,rgba(20,31,51,0.9),rgba(10,16,28,0.94));border:1px solid var(--line);border-radius:16px;padding:30px;text-decoration:none;color:var(--silver);overflow:hidden;transition:all 0.3s;margin-bottom:14px;}
+  .featured::after{content:'';position:absolute;right:-80px;top:-80px;width:260px;height:260px;background:radial-gradient(circle,rgba(124,151,196,0.12),transparent 70%);}
+  .featured:hover{transform:translateY(-3px);border-color:rgba(205,171,107,0.4);box-shadow:0 20px 60px rgba(0,0,0,0.45);}
+  .featured-row{display:flex;align-items:center;gap:22px;flex-wrap:wrap;position:relative;z-index:1;}
+  .icon-tile{width:52px;height:52px;border-radius:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0;background:rgba(255,255,255,0.03);border:1px solid var(--line);}
+  .featured-body{flex:1;min-width:200px;}
+  .featured-title{font-family:'Playfair Display',serif;font-size:clamp(26px,3.5vw,38px);font-weight:800;color:var(--white);line-height:1;margin-bottom:6px;}
+  .featured-venue{font-size:13px;color:var(--silver-soft);}
+  .featured-cta{display:flex;align-items:center;gap:8px;font-family:'DM Mono',monospace;font-size:12px;letter-spacing:1.5px;text-transform:uppercase;color:var(--amber-light);}
+  .featured:hover .featured-cta{gap:12px;color:var(--white);}
+
+  .tournaments{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;}
+  .tourney-card{position:relative;background:rgba(255,255,255,0.018);border:1px solid var(--line);border-radius:14px;padding:24px 22px;text-decoration:none;color:var(--silver);transition:all 0.3s;}
+  .tourney-card:hover{transform:translateY(-4px);border-color:rgba(205,171,107,0.4);background:rgba(255,255,255,0.03);}
+  .tourney-card.complete{opacity:0.62;}
+  .tourney-card.complete:hover{opacity:0.92;}
+  .tourney-card.soon{opacity:0.46;cursor:default;}
+  .tourney-card.soon:hover{transform:none;border-color:var(--line);background:rgba(255,255,255,0.018);}
+  .card-tile{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;margin-bottom:16px;background:rgba(255,255,255,0.03);border:1px solid var(--line);}
+  .card-status{display:inline-flex;align-items:center;gap:6px;font-family:'DM Mono',monospace;font-size:10px;font-weight:500;letter-spacing:1px;text-transform:uppercase;padding:3px 9px;border-radius:4px;margin-bottom:12px;}
+  .s-live{background:rgba(124,151,196,0.14);color:var(--sky-bright);border:1px solid rgba(124,151,196,0.32);}
+  .s-live::before,.s-livedot::before{content:'';width:5px;height:5px;border-radius:50%;background:var(--sky-bright);animation:pulse 2s ease-in-out infinite;}
+  @keyframes pulse{0%,100%{opacity:1;}50%{opacity:0.3;}}
+  .s-upcoming{background:rgba(205,171,107,0.1);color:var(--amber-light);border:1px solid rgba(205,171,107,0.26);}
+  .s-complete{background:rgba(255,255,255,0.04);color:rgba(205,213,227,0.4);border:1px solid rgba(255,255,255,0.07);}
+  .card-title{font-family:'Playfair Display',serif;font-size:21px;font-weight:700;line-height:1.1;margin-bottom:6px;color:var(--white);}
+  .card-venue{font-size:11px;color:var(--silver-soft);margin-bottom:8px;line-height:1.4;}
+  .card-dates{font-family:'DM Mono',monospace;font-size:11px;color:var(--amber-light);letter-spacing:0.5px;}
+
+  /* ── MONEY ── */
+  .money-wrap{background:rgba(255,255,255,0.018);border:1px solid var(--line);border-radius:14px;overflow:hidden;}
+  .money-table{width:100%;border-collapse:collapse;}
+  .money-table th{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:1px;text-transform:uppercase;color:var(--silver-soft);font-weight:500;padding:15px 10px;text-align:right;border-bottom:1px solid var(--line);}
+  .money-table th:first-child{text-align:left;padding-left:22px;}
+  .money-table th.total-col{color:var(--amber-light);}
+  .live-mini{display:inline-flex;align-items:center;gap:4px;}
+  .money-table td{padding:15px 10px;text-align:right;font-family:'DM Mono',monospace;font-size:14px;border-bottom:1px solid rgba(255,255,255,0.04);}
+  .money-table tr:last-child td{border-bottom:none;}
+  .money-table td.player{text-align:left;padding-left:22px;font-family:'Outfit',sans-serif;font-weight:600;font-size:15px;color:var(--white);}
+  .chip{display:inline-block;width:8px;height:8px;border-radius:2px;margin-right:11px;vertical-align:middle;}
+  .rank{display:inline-block;width:20px;color:var(--silver-soft);font-family:'DM Mono',monospace;font-size:12px;}
+  .pos{color:var(--pos);}.neg{color:var(--neg);}.zero{color:var(--silver-soft);}.pend{color:var(--muted);}
+  .total-col{font-weight:600;font-size:15px !important;background:rgba(205,171,107,0.05);}
+  .leader td{background:rgba(205,171,107,0.06);}
+  .money-note{font-family:'DM Mono',monospace;font-size:11px;color:var(--silver-soft);text-align:center;padding:14px;letter-spacing:0.5px;}
+
+  /* ── ROSTER ── */
+  .roster-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;}
+  .member-card{padding:20px 14px;background:rgba(255,255,255,0.018);border:1px solid var(--line);border-radius:12px;text-align:center;transition:all 0.3s;}
+  .member-card:hover{border-color:rgba(205,171,107,0.28);background:rgba(255,255,255,0.03);}
+  .member-avatar{width:42px;height:42px;border-radius:50%;margin:0 auto 12px;display:flex;align-items:center;justify-content:center;font-family:'DM Mono',monospace;font-size:15px;font-weight:500;color:var(--white);position:relative;}
+  .member-avatar::after{content:'';position:absolute;inset:-3px;border-radius:50%;border:1px solid currentColor;opacity:0.4;}
+  .member-name{font-size:16px;font-weight:600;color:var(--white);margin-bottom:5px;}
+  .member-quip{font-family:'DM Mono',monospace;font-size:10px;color:var(--silver-soft);line-height:1.4;}
+
+  .rules-section{padding:54px 24px 40px;max-width:740px;margin:0 auto;text-align:center;}
+  .rules-section::before{content:'';display:block;width:36px;height:1px;background:var(--amber);opacity:0.4;margin:0 auto 28px;}
+  .rules-quote{font-family:'Playfair Display',serif;font-style:italic;font-size:clamp(15px,1.8vw,19px);line-height:1.75;color:rgba(205,213,227,0.85);margin-bottom:26px;}
+  .rules-list{list-style:none;display:flex;flex-wrap:wrap;justify-content:center;gap:8px 18px;}
+  .rules-list li{font-family:'DM Mono',monospace;font-size:11px;color:var(--silver-soft);letter-spacing:0.3px;}
+  .rules-list li:not(:last-child)::after{content:'·';margin-left:18px;opacity:0.4;}
+
+  footer{text-align:center;padding:34px 24px 30px;border-top:1px solid rgba(205,171,107,0.1);margin-top:30px;}
+  .footer-text{font-family:'DM Mono',monospace;font-size:11px;color:var(--silver-soft);letter-spacing:1px;}
+  a:focus-visible{outline:2px solid var(--amber-light);outline-offset:4px;}
+
+  @media(max-width:760px){
+    .tournaments{grid-template-columns:1fr;}
+    .roster-grid{grid-template-columns:1fr 1fr;}
+    .money-table th.hide-sm,.money-table td.hide-sm{display:none;}
+  }
+</style>
 </head>
 <body>
 
-  <section class="hero">
-    <div class="hero-icon">
-      <svg class="hero-badge" width="110" height="110" viewBox="0 0 110 110" xmlns="http://www.w3.org/2000/svg">
-        <defs>
-          <linearGradient id="ringGold" x1="0" y1="0" x2="1" y2="1">
-            <stop offset="0%" stop-color="#f2cf86"/>
-            <stop offset="100%" stop-color="#b58b42"/>
-          </linearGradient>
-          <linearGradient id="centerBlue" x1="0" y1="0" x2="1" y2="1">
-            <stop offset="0%" stop-color="#7fb3ff"/>
-            <stop offset="100%" stop-color="#2c4f82"/>
-          </linearGradient>
-        </defs>
-        <circle cx="55" cy="55" r="48" fill="none" stroke="url(#ringGold)" stroke-width="3"/>
-        <circle cx="55" cy="55" r="35" fill="url(#centerBlue)" opacity="0.95"/>
-        <path d="M35 70 L55 30 L75 70 Z" fill="none" stroke="#ffffff" stroke-width="4" stroke-linejoin="round"/>
-        <circle cx="55" cy="58" r="5" fill="#ffffff"/>
-      </svg>
-    </div>
+<section class="hero">
+  <div class="hero-emblem">
+    <svg width="62" height="62" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="32" cy="32" r="29" stroke="#cdab6b" stroke-width="1.3" opacity="0.5"/>
+      <circle cx="32" cy="32" r="21" stroke="#7c97c4" stroke-width="0.8" opacity="0.3"/>
+      <path d="M26 45.5V19.5" stroke="#e4cea0" stroke-width="1.7" stroke-linecap="round"/>
+      <path d="M26 20.5l11.5 3.2L26 27" stroke="#cdab6b" stroke-width="1.5" stroke-linejoin="round" stroke-linecap="round"/>
+      <circle cx="26" cy="45.5" r="2.1" fill="#e4cea0"/>
+    </svg>
+  </div>
+  <h1 class="hero-title">Four Way</h1>
+  <p class="hero-subtitle">Four men · Four majors · One running tab</p>
+  <div class="hero-links">
+    <a href="#majors" class="ghost-link">Majors</a>
+    <a href="#money" class="ghost-link">The Money</a>
+    <a href="picks.html" class="ghost-link">Draft Board</a>
+  </div>
+</section>
 
-    <h1 class="hero-title">The Four Horsemen</h1>
-    <p class="hero-subtitle">Bad decisions · Great stories</p>
-    <p class="hero-tagline">"Four men. Eighteen holes. Zero chance every scorecard is fully honest."</p>
+<div class="wrap">
+
+  <section class="section" id="majors">
+    <div class="eyebrow">2026 Season</div>
+    <h2 class="section-title">The Majors</h2>
+
+    <a href="usopen.html" class="featured">
+      <div class="featured-row">
+        <div class="icon-tile">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#e4cea0" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M7 21V3.5"/><path d="M7 4.5l9 2.5-9 2.5"/><path d="M4.5 21h6"/>
+          </svg>
+        </div>
+        <div class="featured-body">
+          <span class="card-status s-live">Jun 18 – 21 · This Week</span>
+          <div class="featured-title">U.S. Open</div>
+          <div class="featured-venue">Shinnecock Hills Golf Club · Southampton, NY · $30 buy-in</div>
+        </div>
+        <div class="featured-cta">View Scoreboard
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+        </div>
+      </div>
+    </a>
 
     <div class="tournaments">
+      <div class="tourney-card soon">
+        <div class="card-tile">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#cdab6b" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M9.5 21h5"/><path d="M12 17.5V21"/><path d="M8 4.5h8v5a4 4 0 01-8 0v-5z"/><path d="M8 6.3H6a2 2 0 002 3"/><path d="M16 6.3h2a2 2 0 01-2 3"/>
+          </svg>
+        </div>
+        <span class="card-status s-upcoming">Jul 16 – 19 · Upcoming</span>
+        <div class="card-title">The Open</div>
+        <div class="card-venue">Royal Birkdale<br>Southport, England</div>
+        <div class="card-dates">Draft to come</div>
+      </div>
 
-      <a href="https://ddonofrio03.github.io/4Way/usopen.html" class="tourney-card" target="_blank" rel="noopener noreferrer">
-        <div class="card-icon" style="background:linear-gradient(135deg,#0a3d62 0%,#06243a 100%);box-shadow:0 4px 16px rgba(10,61,98,0.55);">
-          <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#7fb3ff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M5 21V4"/><path d="M5 4c3-1.5 6 1.5 9 0s5 .5 5 .5v9s-2-1.5-5 0-6-1.5-9 0"/>
+      <a href="pga.html" class="tourney-card complete">
+        <div class="card-tile">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#cdab6b" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M8.5 21h7"/><path d="M12 16.5V21"/><path d="M7.5 4.5h9v5.5a4.5 4.5 0 01-9 0v-5.5z"/><path d="M9.5 4.5V3.3h5v1.2"/>
           </svg>
         </div>
-        <span class="card-status status-live">Live</span>
-        <div class="card-title">U.S. Open 2026</div>
-        <div class="card-venue">Shinnecock Hills · Southampton, NY</div>
-        <div class="card-dates">June 18–21, 2026 · $30 buy-in</div>
-        <div class="card-arrow">
-          View Scoreboard
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
-            <path d="M5 12h14M12 5l7 7-7 7"/>
-          </svg>
-        </div>
-      </a>
-
-      <a href="https://ddonofrio03.github.io/4Way/pga.html" class="tourney-card" target="_blank" rel="noopener noreferrer">
-        <div class="card-icon" style="background:linear-gradient(135deg,#1c2c5b 0%,#11204a 100%);box-shadow:0 4px 16px rgba(28,44,91,0.55);">
-          <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#7fb3ff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M5 21h14"/><path d="M12 17v4"/>
-            <path d="M7 4h10v8a5 5 0 01-10 0V4z"/>
-            <circle cx="12" cy="9" r="2"/>
-          </svg>
-        </div>
-        <span class="card-status status-complete">Done</span>
-        <div class="card-title">PGA Championship 2026</div>
+        <span class="card-status s-complete">May 14 – 17 · Final</span>
+        <div class="card-title">PGA Championship</div>
         <div class="card-venue">Aronimink · Newtown Square, PA</div>
-        <div class="card-dates">May 14–17, 2026 · $30 buy-in</div>
-        <div class="card-arrow">
-          View Scoreboard
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
-            <path d="M5 12h14M12 5l7 7-7 7"/>
-          </svg>
-        </div>
+        <div class="card-dates">View Scoreboard →</div>
       </a>
 
-      <a href="https://ddonofrio03.github.io/4Way/picks.html" class="tourney-card" target="_blank" rel="noopener noreferrer">
-        <div class="card-icon" style="background:linear-gradient(135deg,#1c2c5b 0%,#11204a 100%);box-shadow:0 4px 16px rgba(28,44,91,0.55);">
-          <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#7fb3ff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/>
+      <a href="masters.html" class="tourney-card complete">
+        <div class="card-tile">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#cdab6b" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="14.5" r="4.6"/><path d="M9.4 10.6L7.4 3.5l4.6 2.6 4.6-2.6-2 7.1"/>
           </svg>
         </div>
-        <span class="card-status status-draft">Draft</span>
-        <div class="card-title">U.S. Open Draft</div>
-        <div class="card-venue">Snake draft · 4 picks + alt</div>
-        <div class="card-dates">Get your picks in before Thursday</div>
-        <div class="card-arrow">
-          Open Draft
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
-            <path d="M5 12h14M12 5l7 7-7 7"/>
-          </svg>
-        </div>
-      </a>
-
-      <a href="https://ddonofrio03.github.io/4Way/masters.html" class="tourney-card masters-card" target="_blank" rel="noopener noreferrer">
-        <div class="card-icon card-icon-masters">
-          <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#6be08a" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"/>
-          </svg>
-        </div>
-        <span class="card-status status-complete">Done</span>
-        <div class="card-title">Masters 2026</div>
+        <span class="card-status s-complete">Apr 10 – 13 · Final</span>
+        <div class="card-title">The Masters</div>
         <div class="card-venue">Augusta National · Augusta, GA</div>
-        <div class="card-dates">April 10–13, 2026 · $30 buy-in</div>
-        <div class="card-arrow">
-          View Scoreboard
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
-            <path d="M5 12h14M12 5l7 7-7 7"/>
-          </svg>
-        </div>
+        <div class="card-dates">View Scoreboard →</div>
       </a>
-
-    </div>
-
-    <div class="course-horizon">
-      <svg viewBox="0 0 1440 200" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M0,165 C220,120 350,145 520,132 C690,119 840,98 1010,118 C1160,136 1280,116 1440,102 L1440,200 L0,200Z" fill="rgba(20,33,61,0.55)"/>
-        <path d="M0,178 C250,150 470,168 670,156 C880,144 1100,162 1290,150 C1360,147 1415,150 1440,154 L1440,200 L0,200Z" fill="rgba(12,19,38,0.75)"/>
-        <circle cx="220" cy="132" r="18" fill="rgba(35,48,79,0.55)"/>
-        <circle cx="242" cy="128" r="22" fill="rgba(28,40,67,0.5)"/>
-        <circle cx="820" cy="108" r="19" fill="rgba(35,48,79,0.45)"/>
-        <circle cx="845" cy="104" r="24" fill="rgba(28,40,67,0.38)"/>
-        <line x1="690" y1="92" x2="690" y2="126" stroke="rgba(227,180,93,0.18)" stroke-width="1.5"/>
-        <polygon points="690,92 708,98 690,104" fill="rgba(227,180,93,0.14)"/>
-      </svg>
     </div>
   </section>
 
-  <section class="roster-section">
-    <div class="roster-label">Est. questionable judgment</div>
-    <h2 class="roster-title">The Roster</h2>
+  <section class="section" id="money">
+    <div class="eyebrow">Net · Winnings minus buy-ins</div>
+    <h2 class="section-title">The Money</h2>
+    <div class="money-wrap">
+      <table class="money-table">
+        <thead>
+          <tr>
+            <th>Player</th>
+            <th>Masters</th>
+            <th>PGA</th>
+            <th><span class="live-mini s-livedot">U.S. Open</span></th>
+            <th class="hide-sm">The Open</th>
+            <th class="total-col">Total</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="leader">
+            <td class="player"><span class="rank">1</span><span class="chip" style="background:#006F71"></span>TJ</td>
+            <td class="pos">+$70</td><td class="neg">−$30</td><td class="pend">—</td><td class="pend hide-sm">—</td>
+            <td class="total-col pos">+$40</td>
+          </tr>
+          <tr>
+            <td class="player"><span class="rank">2</span><span class="chip" style="background:#7d3c98"></span>Paul</td>
+            <td class="neg">−$10</td><td class="pos">+$10</td><td class="pend">—</td><td class="pend hide-sm">—</td>
+            <td class="total-col zero">$0</td>
+          </tr>
+          <tr>
+            <td class="player"><span class="rank">3</span><span class="chip" style="background:#6CABDD"></span>Dave</td>
+            <td class="neg">−$30</td><td class="pos">+$10</td><td class="pend">—</td><td class="pend hide-sm">—</td>
+            <td class="total-col neg">−$20</td>
+          </tr>
+          <tr>
+            <td class="player"><span class="rank">4</span><span class="chip" style="background:#b03a2e"></span>Mike</td>
+            <td class="neg">−$30</td><td class="pos">+$10</td><td class="pend">—</td><td class="pend hide-sm">—</td>
+            <td class="total-col neg">−$20</td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="money-note">$30 buy-in per major · $20 per category · ties split evenly</div>
+    </div>
+  </section>
 
+  <section class="section">
+    <div class="eyebrow">Est. questionable judgment</div>
+    <h2 class="section-title">The Roster</h2>
     <div class="roster-grid">
       <div class="member-card">
-        <div class="member-avatar" style="background:linear-gradient(135deg,#4e7ed1,#2f4f87)">M</div>
-        <div class="member-name">Mike</div>
-        <div class="member-quip">Hits one pure iron and talks about it for six holes</div>
-      </div>
-
-      <div class="member-card">
-        <div class="member-avatar" style="background:linear-gradient(135deg,#b58b42,#e3b45d)">P</div>
-        <div class="member-name">Paul</div>
-        <div class="member-quip">Asks "what are we playing for?" before the first tee peg hits the ground</div>
-      </div>
-
-      <div class="member-card">
-        <div class="member-avatar" style="background:linear-gradient(135deg,#00838f,#26a6b5)">T</div>
+        <div class="member-avatar" style="color:#006F71;background:rgba(0,111,113,0.16)">TJ</div>
         <div class="member-name">TJ</div>
-        <div class="member-quip">Keeps the group alive with one miracle putt and several bad ideas</div>
+        <div class="member-quip">Carries the group on one putt a round</div>
       </div>
-
       <div class="member-card">
-        <div class="member-avatar" style="background:linear-gradient(135deg,#6f63c8,#9287e8)">D</div>
+        <div class="member-avatar" style="color:#a874c4;background:rgba(125,60,152,0.18)">P</div>
+        <div class="member-name">Paul</div>
+        <div class="member-quip">Wants the stakes set before the first tee</div>
+      </div>
+      <div class="member-card">
+        <div class="member-avatar" style="color:#6CABDD;background:rgba(108,171,221,0.16)">D</div>
         <div class="member-name">Dave</div>
-        <div class="member-quip">Score under review pending witness testimony</div>
+        <div class="member-quip">Score pending review</div>
+      </div>
+      <div class="member-card">
+        <div class="member-avatar" style="color:#d4574a;background:rgba(176,58,46,0.16)">M</div>
+        <div class="member-name">Mike</div>
+        <div class="member-quip">Talks through every iron he flushes</div>
       </div>
     </div>
   </section>
+</div>
 
-  <section class="rules-section">
-    <p class="rules-quote">"I solemnly swear to respect the game, pay my bets, and never use the phrase 'that's not usually my shot' more than nine times per round."</p>
+<section class="rules-section">
+  <p class="rules-quote">"Respect the game, pay your bets, and keep 'that's not usually my shot' to a minimum."</p>
+  <ul class="rules-list">
+    <li>No drops for embarrassment</li>
+    <li>Venmo beats an apology</li>
+    <li>Own your snap-hook</li>
+    <li>Range form isn't a stat</li>
+    <li>Bets are final</li>
+  </ul>
+</section>
 
-    <ul class="rules-list">
-      <li>No free drops from embarrassment</li>
-      <li>Venmo is faster than an apology</li>
-      <li>If you snap-hook it, own it</li>
-      <li>Range balls do not count as confidence</li>
-      <li>Any club thrown becomes a witness</li>
-    </ul>
-  </section>
-
-  <footer>
-    <div class="footer-text">The Four Horsemen · 2026 Season · Lies may vary. Receipts remain.</div>
-  </footer>
+<footer>
+  <div class="footer-text">Four Way · 2026 Season</div>
+</footer>
 
 </body>
 </html>
