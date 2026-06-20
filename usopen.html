@@ -971,13 +971,19 @@ async function fetchScores() {
     const fieldNonWD = sorted.filter(p =>
       p.athlete?.displayName && !(p.score === "WD" || p.score === "wd")
     );
-    // R2 is final when essentially every non-WD player has 18 holes recorded in
-    // round 2 (one straggler/late WD tolerated). Per-hole data for R2 is present
-    // here because R3 hasn't begun, so it's the latest round.
-    const r2Done = fieldNonWD.filter(p =>
-      (p.linescores?.[1]?.linescores?.length ?? 0) === 18
-    ).length;
-    const r2Complete = fieldNonWD.length > 0 &&
+    // R2 is final when essentially every non-WD player has a recorded R2 round
+    // and nobody is still mid-R2 (one straggler/late WD tolerated). ESPN drops
+    // per-hole linescores once a round is complete, so a present R2 round score
+    // (displayValue) is the reliable "done" signal; per-hole counts only tell us
+    // when someone is still on the course (1–17 holes), which blocks the line.
+    let anyMidR2 = false;
+    const r2Done = fieldNonWD.filter(p => {
+      const r2 = p.linescores?.[1];
+      const holes = r2?.linescores?.length ?? 0;
+      if (holes > 0 && holes < 18) anyMidR2 = true;
+      return holes === 18 || (!!r2?.displayValue && holes === 0);
+    }).length;
+    const r2Complete = !anyMidR2 && fieldNonWD.length > 0 &&
       r2Done >= fieldNonWD.length - 1 && r2Done / fieldNonWD.length >= 0.95;
     if (r2Complete) {
       // After 36 holes a player's `score` is their two-round total. Sort ascending;
