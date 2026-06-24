@@ -614,15 +614,15 @@
       </div>
     </div>
     <div class="header-right">
-      <span class="live-dot" id="live-indicator">LIVE</span>
+      <span class="live-dot" id="live-indicator">FINAL</span>
       <span class="last-update" id="last-update">--</span>
-      <button class="refresh-btn" id="refresh-btn" onclick="refresh()">Refresh</button>
+      <a class="refresh-btn" id="refresh-btn" href="https://www.espn.com/golf/leaderboard" target="_blank" rel="noopener">View on ESPN</a>
     </div>
   </div>
 </header>
 
 <div class="countdown-bar">
-  Next auto-refresh in <span id="countdown">60s</span>
+  Final · scores frozen from the ESPN leaderboard
 </div>
 
 <div class="tabs-wrap">
@@ -920,7 +920,70 @@ function realRoundCount(ls) {
   return count;
 }
 
+// ═══════════════════════════════════════════════
+// FINAL — LOCKED SNAPSHOT
+// ═══════════════════════════════════════════════
+// The 2026 U.S. Open is complete. The scores below are frozen from the final
+// ESPN leaderboard, so this page no longer depends on the live feed. Cash Won
+// and Team Scores are computed from these numbers exactly as they were live.
+// To reopen this page for a future event, set LOCKED_FINAL = false.
+const LOCKED_FINAL = true;
+
+// [name, R1, R2, R3, R4, 72-hole total]  ·  trailing `true` = missed cut.
+// Cut players carry only R1/R2; their R3/R4 are scored by the standard +2
+// penalty (computed automatically), so they are left null here.
+const FINAL_SCORES = [
+  ["Scottie Scheffler", "+2", "-2", "-1", "+1", "E"],
+  ["Xander Schauffele",  "+1", "-4", "+3", "+2", "+2"],
+  ["Tommy Fleetwood",    "E",  "+1", "E",  "+1", "+2"],
+  ["Collin Morikawa",    "+3", "-5", "+3", "+2", "+3"],
+  ["Justin Thomas",      "+1", "-2", "+5", "-1", "+3"],
+  ["Ludvig Åberg",       "-1", "+2", "+6", "-4", "+3"],
+  ["Matt Fitzpatrick",   "-3", "E",  "+4", "+3", "+4"],
+  ["Rory McIlroy",       "-1", "+1", "+3", "+3", "+6"],
+  ["Cameron Young",      "+2", "E",  "+3", "+3", "+8"],
+  ["Russell Henley",     "E",  "+3", "+10","+1", "+14"],
+  ["Brooks Koepka",      "+3", "+7", null, null, null, true],
+  ["J.J. Spaun",         "+7", "+1", null, null, null, true],
+  ["Jon Rahm",           "-2", "+8", null, null, null, true],
+  ["Si Woo Kim",         "+7", "-1", null, null, null, true],
+  ["Viktor Hovland",     "+6", "-1", null, null, null, true],
+  ["Patrick Reed",       "+2", "+3", null, null, null, true]
+];
+
+// Build the same scoreMap shape the live pipeline produced, straight from the
+// frozen rows — no network, no cut inference needed (cuts are marked here).
+function buildFrozenScoreMap() {
+  eventMeta = { state: "post", completed: true };
+  const nameEl = document.getElementById("event-name");
+  if (nameEl) nameEl.textContent = CONFIG.eventName;
+
+  // Count shared totals so tied finishers get a "T" position prefix.
+  const totalCounts = {};
+  FINAL_SCORES.forEach(r => { if (!r[6]) totalCounts[r[5]] = (totalCounts[r[5]] || 0) + 1; });
+
+  const map = {};
+  let played = 0, rank = 0, prevTotal = null;
+  FINAL_SCORES.forEach(([name, r1, r2, r3, r4, total, cut]) => {
+    if (cut) {
+      map[name] = { score: "CUT", today: "--", thru: "CUT", pos: "CUT",
+        r1, r2, r3: "--", r4: "--",
+        r1holes: 18, r2holes: 18, r3holes: 0, r4holes: 0, isCut: true, isWD: false };
+    } else {
+      played++;
+      if (total !== prevTotal) rank = played;   // standard competition ranking
+      prevTotal = total;
+      map[name] = { score: total, today: r4, thru: "F",
+        pos: (totalCounts[total] > 1 ? "T" + rank : String(rank)),
+        r1, r2, r3, r4,
+        r1holes: 18, r2holes: 18, r3holes: 18, r4holes: 18, isCut: false, isWD: false };
+    }
+  });
+  return map;
+}
+
 async function fetchScores() {
+  if (LOCKED_FINAL) return buildFrozenScoreMap();   // archived — no live fetch
   const url = "https://site.api.espn.com/apis/site/v2/sports/golf/pga/scoreboard";
   const res  = await fetch(url);
   const data = await res.json();
@@ -1085,6 +1148,7 @@ async function fetchScores() {
 // Show a banner so we catch typos before they silently zero a score.
 function checkNameMismatches() {
   const banner = document.getElementById("name-warning");
+  if (LOCKED_FINAL) { banner.style.display = "none"; return; }
   const drafted = allDrafted();
   if (!drafted.size) { banner.style.display = "none"; return; }
 
@@ -1493,8 +1557,7 @@ async function refresh() {
   fetching = true;
 
   const btn = document.getElementById("refresh-btn");
-  btn.disabled = true;
-  btn.textContent = "Loading...";
+  if (!LOCKED_FINAL) { btn.disabled = true; btn.textContent = "Loading..."; }
   document.getElementById("status-msg").textContent = "";
   document.getElementById("status-msg").classList.remove("error");
 
@@ -1508,7 +1571,7 @@ async function refresh() {
     const now = new Date();
     document.getElementById("last-update").textContent =
       now.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", second: "2-digit" });
-    document.getElementById("live-indicator").textContent = "LIVE";
+    document.getElementById("live-indicator").textContent = LOCKED_FINAL ? "FINAL" : "LIVE";
     resetCountdown();
   } catch (e) {
     document.getElementById("status-msg").textContent = "Error fetching scores: " + e.message;
@@ -1516,12 +1579,12 @@ async function refresh() {
     document.getElementById("live-indicator").textContent = "ERROR";
   } finally {
     fetching = false;
-    btn.disabled = false;
-    btn.textContent = "Refresh";
+    if (!LOCKED_FINAL) { btn.disabled = false; btn.textContent = "Refresh"; }
   }
 }
 
 function resetCountdown() {
+  if (LOCKED_FINAL) { clearInterval(countdownTimer); return; }   // archived — frozen
   countdown = CONFIG.refreshInterval;
   clearInterval(countdownTimer);
   countdownTimer = setInterval(() => {
