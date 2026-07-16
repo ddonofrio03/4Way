@@ -620,15 +620,15 @@
       </div>
     </div>
     <div class="header-right">
-      <span class="live-dot" id="live-indicator">FINAL</span>
+      <span class="live-dot" id="live-indicator">LIVE</span>
       <span class="last-update" id="last-update">--</span>
-      <a class="refresh-btn" id="refresh-btn" href="https://www.espn.com/golf/leaderboard" target="_blank" rel="noopener">View on ESPN</a>
+      <button class="refresh-btn" id="refresh-btn" onclick="refresh()">Refresh</button>
     </div>
   </div>
 </header>
 
 <div class="countdown-bar">
-  Final · scores frozen from the ESPN leaderboard
+  Next auto-refresh in <span id="countdown">60s</span>
 </div>
 
 <div class="tabs-wrap">
@@ -671,16 +671,16 @@ const CONFIG = {
 
   // Populated post-draft (paste the output from picks.html here).
   picks: {
-    Dave  : [],
-    TJ    : [],
-    Mike  : [],
-    Paul  : []
+    Dave  : ["Tommy Fleetwood", "Xander Schauffele", "Justin Rose", "Robert MacIntyre"],
+    TJ    : ["Scottie Scheffler", "Chris Gotterup", "Cameron Young", "Wyndham Clark"],
+    Mike  : ["Matt Fitzpatrick", "Jon Rahm", "Tyrrell Hatton", "Viktor Hovland"],
+    Paul  : ["Rory McIlroy", "Collin Morikawa", "Ludvig Åberg", "Joaquín Niemann"]
   },
   alts: {
-    Dave  : "",
-    TJ    : "",
-    Mike  : "",
-    Paul  : ""
+    Dave  : "Shane Lowry",
+    TJ    : "Bryson DeChambeau",
+    Mike  : "Min Woo Lee",
+    Paul  : "Tom Kim"
   },
 
   colors: {
@@ -932,11 +932,12 @@ function realRoundCount(ls) {
 // ═══════════════════════════════════════════════
 // FINAL — LOCKED SNAPSHOT
 // ═══════════════════════════════════════════════
-// The 2026 U.S. Open is complete. The scores below are frozen from the final
-// ESPN leaderboard, so this page no longer depends on the live feed. Cash Won
-// and Team Scores are computed from these numbers exactly as they were live.
-// To reopen this page for a future event, set LOCKED_FINAL = false.
-const LOCKED_FINAL = true;
+// This page was cloned from the frozen usopen.html, so it arrived locked to the
+// U.S. Open's final leaderboard. The Open is live, so the lock is off and scores
+// come from the ESPN feed again. FINAL_SCORES below is the U.S. Open snapshot and
+// is dead while this is false — it is kept only as the template for freezing this
+// page once The Open finishes (set this back to true and swap in Open scores).
+const LOCKED_FINAL = false;
 
 // [name, R1, R2, R3, R4, 72-hole total]  ·  trailing `true` = missed cut.
 // Cut players carry only R1/R2; their R3/R4 are scored by the standard +2
