@@ -502,7 +502,9 @@ function renderLobby(){
 }
 
 function claimName(name){
-  if(claimed.includes(name) && name !== myName) return; // seat taken by someone else
+  // No early-out on a taken seat: in the lobby the button is disabled, so this only
+  // fires from the identity picker, where re-claiming your own seat (rejoin from a new
+  // device / after the draft started) must be allowed.
   const prev = myName;
   myName = name;
   localStorage.setItem(NAME_KEY, name);
