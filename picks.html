@@ -50,6 +50,11 @@
     margin-bottom:8px;font-family:'DM Mono',monospace;
   }
 
+  #identity-modal{display:none;}
+  #identity-modal.show{display:flex;position:fixed;inset:0;z-index:1000;background:rgba(0,0,0,.5);align-items:center;justify-content:center;padding:20px;}
+  .identity-card{background:var(--white);border:1px solid var(--border);border-radius:12px;padding:22px 20px;max-width:420px;width:100%;box-shadow:0 12px 40px rgba(0,0,0,.25);}
+  .identity-prompt{font-family:'Bebas Neue',sans-serif;letter-spacing:1px;font-size:20px;margin-bottom:14px;}
+
   .name-grid{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:18px;}
   .name-btn{
     font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:0.5px;padding:10px 20px;
@@ -164,6 +169,7 @@
     </div>
   </div>
 </header>
+<div id="identity-modal"></div>
 <main>
 
   <div class="screen active" id="screen-lobby">
@@ -430,6 +436,30 @@ function render(){
   else if(phase === "setup"){ showScreen("setup"); renderSetup(); }
   else if(phase === "draft"){ showScreen("draft"); renderDraft(); }
   else if(phase === "complete"){ showScreen("complete"); buildConfigOutput(); }
+
+  updateIdentityGate();
+}
+
+// Anyone who never claimed a seat before the draft started has no way back in once the
+// draft is underway (the lobby — the only other place to pick your name — is gone).
+// It lives OUTSIDE the per-screen render so the 4s poll / realtime re-renders don't
+// tear down its buttons mid-tap or shift it as the board below reflows. We only
+// (re)build it when it isn't already up, so tap targets stay stable. Taken seats stay
+// clickable so you can rejoin from a new device.
+function updateIdentityGate(){
+  const modal = document.getElementById("identity-modal");
+  const needed = !myName && (phase === "setup" || phase === "draft");
+  if(!needed){ modal.className = ""; modal.innerHTML = ""; return; }
+  if(modal.classList.contains("show")) return; // already up — leave it so taps land
+  const btns = BETTORS.map(b => {
+    const rejoin = claimed.includes(b) ? ` <span style="font-size:11px;opacity:.65">(rejoin)</span>` : "";
+    return `<button class="name-btn" onclick="claimName('${b}')">${b}${rejoin}</button>`;
+  }).join("");
+  modal.className = "show";
+  modal.innerHTML = `<div class="identity-card">
+    <div class="identity-prompt">Tap your name to join the draft</div>
+    <div class="name-grid">${btns}</div>
+  </div>`;
 }
 
 /* ════════════════════════════════════════════════
