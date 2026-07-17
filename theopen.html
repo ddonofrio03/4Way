@@ -660,9 +660,22 @@ const CONFIG = {
   refreshInterval: 60, // seconds
   // Pot per category. $20 × 6 categories = $120 total pot. $30 per-person buy-in × 4 people = $120.
   points: { R1: 20, R2: 20, R3: 20, R4: 20, Overall: 20, Winner: 20 },
-  // Cut rule for flagging missed cuts before R3 tees off. U.S. Open = low 60 and ties.
-  cutPlaces: 60,
+  // Cut rule: low CUT_PLACES and ties. The engine computes the actual cut line
+  // from the field's 36-hole totals; the number varies by event (The Open = low
+  // 70 and ties; U.S. Open = 60).
+  cutPlaces: 70,
   buyIn: 30,
+
+  // Authoritative backstop — any name here is marked CUT regardless of the live
+  // feed. Missed the cut at The Open (Royal Birkdale); ESPN displayName spelling.
+  cutList: [
+    "Justin Rose",        // Dave
+    "Wyndham Clark",      // TJ
+    "Matt Fitzpatrick",   // Mike
+    "Viktor Hovland",     // Mike
+    "Joaquín Niemann",    // Paul
+    "Tom Kim"             // Paul (alt)
+  ],
 
   bettors: ["Dave", "TJ", "Mike", "Paul"],
 
@@ -1021,6 +1034,9 @@ async function fetchScores() {
   if (!comp) throw new Error("No competition data");
   const sorted = [...(comp.competitors || [])].sort((a, b) => (a.order || 999) - (b.order || 999));
 
+  // Authoritative hardcoded cut list — a name here is cut regardless of the feed.
+  const cutSet = new Set(CONFIG.cutList || []);
+
   // Pre-pass: figure out the max number of "real" rounds anyone has played.
   // This drives programmatic cut detection (replaces masters.html's hardcoded list).
   const realCounts = sorted.map(p => realRoundCount(p.linescores || []));
@@ -1108,7 +1124,9 @@ async function fetchScores() {
     // Programmatic cut: once R3 has begun, anyone with only 2 real rounds
     // and not WD is cut. No more hardcoded names.
     const inferredCut = r3HasStarted && myRealRounds <= 2 && !isWD;
-    const isCut = explicitCut || statusCut || lineCut || inferredCut;
+    // Authoritative backstop — a name in CONFIG.cutList is cut no matter what.
+    const listCut = cutSet.has(name);
+    const isCut = listCut || explicitCut || statusCut || lineCut || inferredCut;
 
     const score = isCut ? "CUT" : isWD ? "WD" : (p.score || "E");
 
